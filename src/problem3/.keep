@@ -1,0 +1,37 @@
+1. Incorrect typings / any usage
+
+getPriority accepts (blockchain: any).
+→ Loses type safety, should be strongly typed (union of strings or enum).
+
+2. lhsPriority is undefined
+
+Inside useMemo → filter, the code references lhsPriority which doesn’t exist.
+It should be using the priority of the current balance, but instead references a variable that isn’t declared → bug.
+
+3. Inefficient + incorrect filter
+
+Uses undefined variable (lhsPriority).
+
+Logically wrong: it keeps balances with amount ≤ 0, instead of excluding them.
+
+Repeatedly calls getPriority → wasted work (it will be called again in .sort)
+
+4. useMemo dependencies are wrong
+
+prices is not used inside useMemo → unnecessary dependency → causes extra recomputes.
+
+5. Using index as key in React list
+
+6. Formatting inside .map
+
+toFixed() defaults to 0 decimal places, probably not intended.
+
+Formatting could be computed inline when rendering instead of mapping a second array.
+
+Creates a new array unnecessarily when it could be merged into rows.
+
+7. Sorting inefficiency
+
+Calls getPriority twice per comparison inside .sort. Could cache values.
+
+Sorting happens even if no balances change (expensive on large arrays). Should be memoized only when needed.
